@@ -4,27 +4,207 @@
     <title>Title</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <style type="text/css">
-      /* Slideshow styles */
+      @import url(http://fonts.googleapis.com/css?family=Droid+Serif);
+      @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+
+      body {
+        font-family: 'Droid Serif';
+        font-size: 20px;
+      }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: 400;
+        margin-bottom: 0;
+      }
+      h1 { font-size: 4em; }
+      h2 { font-size: 2em; }
+      h3 { font-size: 1.6em; }
+      .footnote {
+        position: absolute;
+        bottom: 3em;
+      }
+      li p { line-height: 1.25em; }
+      .red { color: #fa0000; }
+      .large { font-size: 2em; }
+      a, a > code {
+        color: rgb(249, 38, 114);
+        text-decoration: none;
+      }
+      code {
+        -moz-border-radius: 5px;
+        -web-border-radius: 5px;
+        background: #e7e8e2;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      .pull-left {
+        float: left;
+        width: 47%;
+      }
+      .pull-right {
+        float: right;
+        width: 47%;
+      }
+      .pull-right ~ p {
+        clear: both;
+      }
+      #slideshow .slide .content code {
+        font-size: 0.8em;
+      }
+      #slideshow .slide .content pre code {
+        font-size: 0.9em;
+        padding: 15px;
+      }
+      .inverse {
+        background: #272822;
+        color: #777872;
+        text-shadow: 0 0 20px #333;
+      }
+      .inverse h1, .inverse h2 {
+        color: #f3f3f3;
+        line-height: 0.8em;
+      }
+
+      /* Slide-specific styling */
+      #slide-inverse .footnote {
+        bottom: 12px;
+        left: 20px;
+      }
+      #slide-how .slides {
+        font-size: 0.9em;
+        position: absolute;
+        top:  151px;
+        right: 140px;
+      }
+      #slide-how .slides h3 {
+        margin-top: 0.2em;
+      }
+      #slide-how .slides .first, #slide-how .slides .second {
+        padding: 1px 20px;
+        height: 90px;
+        width: 120px;
+        -moz-box-shadow: 0 0 10px #777;
+        -webkit-box-shadow: 0 0 10px #777;
+        box-shadow: 0 0 10px #777;
+      }
+      #slide-how .slides .first {
+        background: #fff;
+        position: absolute;
+        top: 20%;
+        left: 20%;
+        z-index: 1;
+      }
+      #slide-how .slides .second {
+        position: relative;
+        background: #fff;
+        z-index: 0;
+      }
+
+      /* Two-column layout */
+      .left-column {
+        color: #777;
+        width: 20%;
+        height: 92%;
+        float: left;
+      }
+        .left-column h2:last-of-type, .left-column h3:last-child {
+          color: #000;
+        }
+      .right-column {
+        width: 75%;
+        float: right;
+        padding-top: 2em;
+      }
+      .img_full img { width: 100%;}
     </style>
   </head>
   <body>
     <textarea id="source">
 
-class: center, middle
+name: inverse
+layout: true
 
-# Title
+---
 
+class: center, middle, inverse
+
+# Python and Openstack
+## Quick tour on some libraries
+[work in progress]
 ---
 
 # Agenda
 
 1. Introduction
-2. Deep-dive
-3. ...
+2. Pecan and WSME
+3. Cliff
+4. Stevedore
+5. Alembic
+6. Testr
+7. Oslo
 
 ---
 
-# Introduction
+# Who am I ?
+
+
+
+## At Bull, working on FOSS project named [XLCloud](http://www.xlcloud.org)
+
+## Contributor for Openstack, in particular with Compute and Reservation services
+
+---
+
+class: img_full
+
+# But what the ... is Openstack ?
+
+![Openstack Conceptual diagram](pyug_src/openstack-software-diagram.png)
+
+---
+
+class: img_full
+
+# No, wait, Openstack is that !
+
+![Openstack logical diagram](pyug_src/openstack-logical-diagram.jpg)
+
+---
+
+class: img_full
+
+# Hold on, I saw that...
+
+![Openstack Horizon Dashboard](pyug_src/openstack-horizon.jpg)]
+
+
+---
+
+# CI/CD are not offensive words
+
+.left-column[
+### Review system with Gerrit
+### Zuul Pipeline to Jenkins masters
+### PEP8/Unit/Functional tests 
+]
+
+---
+# The big thing
+
+## Per-project coding
+---
+# The big thing
+
+## Per-project coding
+## Efforts for sharing good practices
+---
+# The big thing
+
+## Per-project coding
+## Efforts for sharing good practices
+## A set of common libraries containing code shared in Openstack
+
+
 
     </textarea>
     <script src="http://sbauza.github.io/lib/remark-0.6.0.min.js" type="text/javascript">
