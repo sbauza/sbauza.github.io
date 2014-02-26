@@ -115,7 +115,11 @@
         float: right;
         padding-top: 2em;
       }
+
+      /* My little ugly hacks...*/
       .img_full img { width: 100%;}
+      .img_col img {width: 95%; float: right;}
+      .code12px code {font-size: 12px;}
     </style>
   </head>
   <body>
@@ -131,6 +135,7 @@ class: center, middle, inverse
 # Python and Openstack
 ## Quick tour on some libraries
 [work in progress]
+
 ---
 
 # Agenda
@@ -140,18 +145,17 @@ class: center, middle, inverse
 3. Cliff
 4. Stevedore
 5. Alembic
-6. Testr
-7. Oslo
+6. Oslo
 
 ---
 
-# Who am I ?
+# $ id
 
 
 
-## At Bull, working on FOSS project named [XLCloud](http://www.xlcloud.org)
+## At Bull, working on a FOSS project named [XLCloud](http://www.xlcloud.org)
 
-## Contributor for Openstack, in particular with Compute and Reservation services
+## Openstack _Active Technical Contributor_, in particular with Compute and Reservation services
 
 ---
 
@@ -180,32 +184,399 @@ class: img_full
 
 ---
 
+class: img_col
+
 # CI/CD are not offensive words
 
 .left-column[
 ### Review system with Gerrit
-### Zuul Pipeline to Jenkins masters
-### PEP8/Unit/Functional tests 
+]
+.right-column[
+![Review of a patch](pyug_src/gerrit_patch.jpg)]
+]
+---
+class: img_col
+
+# CI/CD are not offensive words
+
+.left-column[
+### Review system with Gerrit
+### Zuul Pipeline
+]
+.right-column[
+![Zuul overview](pyug_src/zuul_overview.jpg)]
+]
+---
+
+class: img_col
+
+# CI/CD are not offensive words
+
+.left-column[
+### Review system with Gerrit
+### Zuul Pipeline
+### Jenkins tests 
+]
+.right-column[
+![Jenkins checks](pyug_src/gerrit_jenkins.jpg)]
 ]
 
 ---
-# The big thing
+# OK but Python by itself ?
 
 ## Per-project coding
 ---
-# The big thing
+# OK but Python by itself ?
 
 ## Per-project coding
 ## Efforts for sharing good practices
 ---
-# The big thing
+# OK but Python by itself ?
 
 ## Per-project coding
 ## Efforts for sharing good practices
 ## A set of common libraries containing code shared in Openstack
+---
+# OK but Python by itself ?
+
+## Per-project coding
+## Efforts for sharing good practices
+## A set of common libraries containing code shared in Openstack
+## ...and some other external libraries (say hello to Pypi.openstack.org)
+---
+
+class: center, middle, inverse
+
+## Pecan and WSME
+[pɪˈkɑn] and [wizme]
+
+---
+
+# Pecan
+
+_"a very lightweight [HTTP] framework that provides object-dispatch style routing"_
+
+- WSGI application running on top of a WSGI server (wsgiref, mod_wsgi, eventlet...)
+- REST-style controllers
+- Object routing
+- Templating
+- Hooks
+
+---
+
+# Configuration
+
+```python
+# Server Specific Configurations
+server = {
+    'port': '8080',
+    'host': '0.0.0.0'
+}
+
+# Pecan Application Configurations
+app = {
+    'root': '${package}.controllers.root.RootController',
+    'modules': ['${package}'],
+    'static_root': '%(confdir)s/public',
+    'template_path': '%(confdir)s/${package}/templates',
+    'debug': True,
+    'errors': {
+        '404': '/error/404',
+        '__force_dict__': True
+    }
+}
+```
+---
+
+# Running the application
+
+```python
+pecan.configuration.set_config(dict(pecan_config), overwrite=True)
+
+app = pecan.make_app(
+    pecan_config.app.root,
+    static_root=pecan_config.app.static_root,
+    template_path=pecan_config.app.template_path,
+    debug=CONF.debug,
+    force_canonical=getattr(pecan_config.app, 'force_canonical', True),
+    hooks=app_hooks,
+    wrap_app=middleware.ParsableErrorMiddleware,
+    guess_content_type_from_ext=False
+)
+
+wsgiref.simple_server.make_server(host, port, app).serve_forever()
+```
+---
+
+# Take some REST
+
+.code12px[
+```python
+from pecan import expose
+from pecan.rest import RestController
+
+from mymodel import Author, Book
+
+class BooksController(RestController):
+
+    @expose()
+    def get(self, author_id, id):
+        author = Author.get(author_id)
+        if not author_id:
+            abort(404)
+        book = author.get_book(id)
+        if not book:
+            abort(404)
+        return book.title
+
+class AuthorsController(RestController):
+
+    books = BooksController()
+
+    @expose()
+    def get(self, id):
+        author = Author.get(id)
+        if not author:
+            abort(404)
+        return author.name
+
+class RootController(object):
+
+    authors = AuthorsController()
+```
+]
+---
+# Templating with Pecan
+
+With Mako (default):
+```python
+class MyController(object):
+    @expose('path/to/mako/template.html')
+    def index(self):
+        return dict(message='I am a mako template')
+```
+or with Kajiki:
+```python
+@expose('kajiki:path/to/kajiki/template.html')
+def my_controller(self):
+    return dict(message='I am a kajiki template')
+```
+or your own...:
+```python
+@expose()
+def controller(self):
+    return render('my_template.html', dict(message='I am the namespace'))
+```
+---
+
+# Pecan Hooks, Captain !
+
+```python
+from pecan.hooks import PecanHook
+
+class SimpleHook(PecanHook):
+
+    def before(self, state):
+        print "\nabout to enter the controller..."
+
+    def after(self, state):
+        print "\nmethod: \t %s" % state.request.method
+        print "\nresponse: \t %s" % state.response.status
+```
+
+# WSME
+
+_"Web Service Made Easy (WSME) simplify the writing of REST web services by providing simple yet powerful typing which removes the need to directly manipulate the request and the response objects"_
+
+- Simple input validation with defined and extensible types 
+- Native handling of different protocols (REST/Json, REST/XML, SOAP, etc.)
+- Framework independance (Pecan, Flask, cornice...)
+- Sphinx integration for automatic API documentation
+
+---
+# WSME types
+
+- Native types : 
+  - bytes, int, text (_Six.text_type_), float, bool, decimal, date, datetime, time, Arrays, Dicts
+- User types : 
+  - binary
+  - Enum
+  - UUIDType
+  - StringType
+- Complex types : should be inheriting from Base type. Eg.:
+
+```
+Gender = wsme.types.Enum(str, 'male', 'female')
+Title = Ewsme.types.num(str, 'M', 'Mrs')
+
+class Person(wsme.types.Base):
+    lastname = wsme.types.wsattr(unicode, mandatory=True)
+    firstname = wsme.types.wsattr(unicode, mandatory=True)
+
+    age = int
+    gender = Gender
+    title = Title
+
+    hobbies = [unicode]
+``` 
+---
+
+# Example with Pecan
+
+The previous example from Pecan becomes :
+```python
+from wsmeext.pecan import wsexpose
+
+class BooksController(RestController):
+    @wsexpose(Book, int, int)
+    def get(self, author_id, id):
+        # ..
+
+    @wsexpose(Book, int, int, body=Book)
+    def put(self, author_id, id, book):
+        # ..
+
+class AuthorsController(RestController):
+        books = BooksController()
+```
+---
+
+# Sphinx documentation
+
+- Extension for the Sphinx project
+- Autodoc directives
+- Samples to provide
+
+Example: 
+```rst
+.. rest-controller:: climate.api.v2.controllers.lease:LeasesController
+   :webprefix: /v2/leases
+
+.. autotype:: climate.api.v2.controllers.lease.Lease
+   :members:
+```
+---
+
+class: center, middle, inverse
+
+## Cliff
+[Command Line Interface Formulation Framework]
+
+---
+
+# What is Cliff ?
+
+- Framework for creating pluggable CLI
+- Objects model for commands
+- Native formatters for list outputs (CSV, table...)
+- Command Completion built-in
+- Interactive mode
+
+---
+
+# Climb the Cliff
+
+.code12px[
+```python
+import sys
+
+from cliff.app import App
+from cliff.commandmanager import CommandManager
 
 
+class DemoApp(App):
 
+    def __init__(self):
+        super(DemoApp, self).__init__(
+            description='cliff demo app',
+            version='0.1',
+            command_manager=CommandManager('cliff.demo'),
+            )
+
+    def initialize_app(self, argv):
+        # Before command processing
+
+    def prepare_to_run_command(self, cmd):
+        # Before the command is run
+
+    def clean_up(self, cmd, result, err):
+        # After the command is run
+
+
+def main(argv=sys.argv[1:]):
+    myapp = DemoApp()
+    return myapp.run(argv)
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))
+```
+]
+
+
+---
+
+# Show command
+
+.code12px[
+```python
+import os
+
+from cliff.show import ShowOne
+
+
+class File(ShowOne):
+    "Show details about a file"
+
+    def get_parser(self, prog_name):
+        parser = super(File, self).get_parser(prog_name)
+        parser.add_argument('filename', nargs='?', default='.')
+        return parser
+
+    def take_action(self, parsed_args):
+        stat_data = os.stat(parsed_args.filename)
+        columns = ('Name',
+                   'Size',
+                   'UID',
+                   'GID',
+                   'Modified Time',
+                   )
+        data = (parsed_args.filename,
+                stat_data.st_size,
+                stat_data.st_uid,
+                stat_data.st_gid,
+                stat_data.st_mtime,
+                )
+        return (columns, data)
+```
+]
+
+---
+
+```bash
+$ cliffdemo file setup.py
++---------------+--------------+
+|     Field     |    Value     |
++---------------+--------------+
+| Name          | setup.py     |
+| Size          | 5825         |
+| UID           | 502          |
+| GID           | 20           |
+| Modified Time | 1335569964.0 |
++---------------+--------------+
+```
+---
+
+class: inverse
+
+# References
+
+- Pecan : http://pecan.readthedocs.org/en/latest/
+- WSME : http://wsme.readthedocs.org/en/latest/index.html
+- Cliff : https://cliff.readthedocs.org/en/latest/
+
+
+- And Openstack reviews of course ! 
     </textarea>
     <script src="http://sbauza.github.io/lib/remark-0.6.0.min.js" type="text/javascript">
     </script>
