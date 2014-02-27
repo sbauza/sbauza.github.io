@@ -126,6 +126,14 @@
       .tile1_left {z-index: 1; position: relative; top: 20px;
                    left: 20px; width: 100%;}
       .font_courier { font-family: courier;}
+      .left-full {
+        color: #777;
+        height: 92%;
+        float: left;
+      }
+        .left-full h2:last-of-type, .left-full h3:last-child {
+          color: #000;
+        }
     </style>
   </head>
   <body>
@@ -140,7 +148,10 @@ class: center, middle, inverse
 
 # Python and Openstack
 ## Quick tour on some libraries
-[work in progress]
+
+Sylvain Bauza
+
+Python User Group Grenoble, 27/02/2014
 
 ---
 
@@ -914,6 +925,186 @@ class: inverse, middle, center
 
 __Mission Statement__:
 _"To produce a set of python libraries containing code shared by OpenStack projects. The APIs provided by these libraries should be high quality, stable, consistent, documented and generally applicable."_
+
+- Openstack Program by itself, with a PTL (Project Tech Lead)
+- Using Openstack CI
+- Set of libraries internally and initially developed for Openstack
+- Graduation through incubator and then PyPi
+- Sync tool for incubated libraries (Git repository)
+- Particularly various libraries
+
+
+---
+
+# Oslo libraries
+
+.left-column[
+### Oslo.config 
+]
+
+.right-column[
+.code12px[
+```python
+
+from oslo.config import cfg
+
+CONF = cfg.CONF
+opts = [
+    cfg.IntOpt('port', default=1234,
+               help='Port that will be used to listen on'),
+]
+
+CONF.register_opts(opts)
+
+def mymethod():
+    print CONF.port
+```
+]
+]
+---
+
+# Oslo libraries
+
+.left-column[
+### Oslo.config
+### Oslo.messaging
+]
+
+.right-column[
+.code12px[
+```python
+class RPCClient(object):
+    def __init__(self, target):
+        super(RPCClient, self).__init__()
+        self._client = messaging.RPCClient(
+            target=target,
+            transport=messaging.get_transport(cfg.CONF),
+        )
+
+    def cast(self, name, **kwargs):
+        ctx = context.current()
+        return self._client.cast(ctx.to_dict(), name, **kwargs)
+
+    def call(self, name, **kwargs):
+        ctx = context.current()
+        return self._client.call(ctx.to_dict(), name, **kwargs)
+
+
+class RPCServer(service.Service):
+    def __init__(self, target):
+        super(RPCServer, self).__init__()
+        self._server = messaging.get_rpc_server(
+            target=target,
+            transport=messaging.get_transport(cfg.CONF),
+            endpoints=[ContextEndpointHandler(self, target)],
+        )
+```
+]
+]
+
+
+---
+# Oslo libraries
+
+.left-column[
+### Oslo.config
+### Oslo.messaging
+### Pbr
+]
+
+.right-column[
+.code12px[
+```python
+#!/usr/bin/env python
+
+from setuptools import setup
+
+setup(
+    setup_requires=['pbr'],
+    pbr=True,
+)
+```
+```
+[metadata]
+name = climate
+summary = Reservation Service for OpenStack clouds
+(...)
+home-page = https://launchpad.net/climate
+
+[global]
+setup-hooks = pbr.hooks.setup_hook
+
+[files]
+packages =
+    climate
+
+[entry_points]
+console_scripts =
+    (...)
+```
+]
+]
+
+---
+# Oslo libraries
+
+.left-column[
+### Oslo.config
+### Oslo.messaging
+### Pbr
+### Hacking
+
+]
+
+.right-column[
+###OpenStack Style Guidelines 
+.code12px[
+```python
+def list():
+    return [1, 2, 3]
+
+mylist = list() # BAD, shadows `list` built-in
+
+class Foo(object):
+    def list(self):
+        return [1, 2, 3]
+
+mylist = Foo().list() # OKAY, does not shadow built-in
+```
+```python
+if not X is Y:  # BAD, intended behavior is ambiguous
+    pass
+
+if X is not Y:  # OKAY, intuitive
+    pass
+```
+etc.
+
+http://docs.openstack.org/developer/hacking/
+]
+]
+
+---
+# Oslo libraries
+
+.left-full[
+### Oslo.config
+### Oslo.messaging
+### Pbr
+### Hacking
+### Many many others... (rootwrap, cookiecutter, taskflow, fixtures, db, jsonutils, log, policy...)
+]
+---
+# Oslo libraries
+
+.left-full[
+### Oslo.config
+### Oslo.messaging
+### Pbr
+### Hacking
+### Many many others... (test, rootwrap, cookiecutter, taskflow, fixtures, db, jsonutils, log, policy...)
+### ... and the ones I just presented !
+]
 ---
 class: inverse
 
