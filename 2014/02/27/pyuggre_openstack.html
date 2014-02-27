@@ -120,6 +120,12 @@
       .img_full img { width: 100%;}
       .img_col img {width: 95%; float: right;}
       .code12px code {font-size: 12px;}
+      .tile0 {z-index: 0; position: absolute; opacity: 0.3}
+      .tile1 {z-index: 1; position: relative; top: 20px;
+              float: right; width: 47%;}
+      .tile1_left {z-index: 1; position: relative; top: 20px;
+                   left: 20px; width: 100%;}
+      .font_courier { font-family: courier;}
     </style>
   </head>
   <body>
@@ -144,8 +150,7 @@ class: center, middle, inverse
 2. Pecan and WSME
 3. Cliff
 4. Stevedore
-5. Alembic
-6. Oslo
+5. Oslo
 
 ---
 
@@ -248,7 +253,7 @@ class: img_col
 class: center, middle, inverse
 
 ## Pecan and WSME
-[pɪˈkɑn] and [wizme]
+[pɪˈkɑn] and [ˈwɪzˈme]
 
 ---
 
@@ -383,6 +388,7 @@ class SimpleHook(PecanHook):
         print "\nmethod: \t %s" % state.request.method
         print "\nresponse: \t %s" % state.response.status
 ```
+---
 
 # WSME
 
@@ -553,6 +559,42 @@ class File(ShowOne):
 
 ---
 
+# Show command
+
+.tile0[.code12px[
+```python
+import os
+
+from cliff.show import ShowOne
+
+
+class File(ShowOne):
+    "Show details about a file"
+
+    def get_parser(self, prog_name):
+        parser = super(File, self).get_parser(prog_name)
+        parser.add_argument('filename', nargs='?', default='.')
+        return parser
+
+    def take_action(self, parsed_args):
+        stat_data = os.stat(parsed_args.filename)
+        columns = ('Name',
+                   'Size',
+                   'UID',
+                   'GID',
+                   'Modified Time',
+                   )
+        data = (parsed_args.filename,
+                stat_data.st_size,
+                stat_data.st_uid,
+                stat_data.st_gid,
+                stat_data.st_mtime,
+                )
+        return (columns, data)
+```
+]]
+
+.tile1[
 ```bash
 $ cliffdemo file setup.py
 +---------------+--------------+
@@ -565,18 +607,331 @@ $ cliffdemo file setup.py
 | Modified Time | 1335569964.0 |
 +---------------+--------------+
 ```
+]
+
+
 ---
 
+# List command and formatters
+
+```python
+import logging
+import os
+
+from cliff.lister import Lister
+
+
+class Files(Lister):
+    """Show a list of files in the current directory.
+
+    The file name and size are printed by default.
+    """
+
+    log = logging.getLogger(__name__)
+
+    def take_action(self, parsed_args):
+        return (('Name', 'Size'),
+                ((n, os.stat(n).st_size) for n in os.listdir('.'))
+                )
+```
+---
+
+# List command and formatters
+
+.tile0[
+```python
+import logging
+import os
+
+from cliff.lister import Lister
+
+
+class Files(Lister):
+    """Show a list of files in the current directory.
+
+    The file name and size are printed by default.
+    """
+
+    log = logging.getLogger(__name__)
+
+    def take_action(self, parsed_args):
+        return (('Name', 'Size'),
+                ((n, os.stat(n).st_size) for n in os.listdir('.'))
+                )
+```
+]
+
+.tile1[
+```bash
+$ cliffdemo files
++---------------+------+
+|      Name     | Size |
++---------------+------+
+| build         |  136 |
+| cliffdemo.log | 2546 |
+| Makefile      | 5569 |
+| source        |  408 |
++---------------+------+
+
+$ cliffdemo files -f csv
+"Name","Size"
+"build",136
+"cliffdemo.log",2690
+"Makefile",5569
+"source",408
+```
+]
+---
+
+class: inverse, center, middle
+
+## Stevedore
+[who's this guy ?]
+
+---
+
+# Stevedore
+
+_"Stevedore, dockworker, docker, dock labourer, wharfie, and longshoreman can have various waterfront-related meanings concerning loading and unloading ships, according to place and country."_
+.pull-right[http://en.wikipedia.org/wiki/Stevedore ]
+
+- Dynamic code loading as plugins
+- Use of setuptools for entry points
+- Various loading patterns (Drivers, Hooks, Extensions)
+- Plugins enabling either through installation, explicitely or self-enabled
+- Manager classes wrapping .font_courier[pkg_resources]
+
+---
+
+# Loading Patterns
+
+.left-column[
+### Drivers : Single Name, Single Entry Point
+]
+
+.right-column[
+.center[
+###__DriverManager__ class
+![Driver Pattern](pyug_src/stevedore_driver.png)
+]
+]
+---
+# Loading Patterns
+
+.left-column[
+### Drivers : Single Name, Single Entry Point
+### Hooks : Single Name, Many Entry Points
+]
+
+.right-column[
+.center[
+###__HookManager__ class
+.img_full[
+![Hook Pattern](pyug_src/stevedore_hook.png)
+]
+]
+]
+---
+# Loading Patterns
+
+.left-column[
+### Drivers : Single Name, Single Entry Point
+### Hooks : Single Name, Many Entry Points
+### Extensions : Many Names, Many Entry Points
+]
+
+.right-column[
+.center[
+###__ExtensionManager__ class and subclasses (Named, Dispatch, Enabled)
+![Extension Pattern](pyug_src/stevedore_extension.png)
+]
+]
+
+---
+
+# Example Base Plugin
+
+```python
+# stevedore/example/base.py
+import abc
+
+
+class FormatterBase(object):
+    """Base class for example plugin used in the tutoral.
+    """
+
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self, max_width=60):
+        self.max_width = max_width
+
+    @abc.abstractmethod
+    def format(self, data):
+        """Format the data and return unicode text.
+
+        :param data: A dictionary with string keys and simple types as
+                     values.
+        :type data: dict(str:?)
+        :returns: Iterable producing the formatted text.
+        """
+```
+---
+
+# Example Plugin
+
+```python
+# stevedore/example/simple.py
+from stevedore.example import base
+
+
+class Simple(base.FormatterBase):
+    """A very basic formatter.
+    """
+
+    def format(self, data):
+        """Format the data and return unicode text.
+
+        :param data: A dictionary with string keys and simple types as
+                     values.
+        :type data: dict(str:?)
+        """
+        for name, value in sorted(data.items()):
+            line = '{name} = {value}\n'.format(
+                name=name,
+                value=value,
+            )
+            yield line
+```
+---
+
+# Example Plugin
+
+.tile0[
+```python
+# stevedore/example/simple.py
+from stevedore.example import base
+
+
+class Simple(base.FormatterBase):
+    """A very basic formatter.
+    """
+
+    def format(self, data):
+        """Format the data and return unicode text.
+
+        :param data: A dictionary with string keys and simple types as
+                     values.
+        :type data: dict(str:?)
+        """
+        for name, value in sorted(data.items()):
+            line = '{name} = {value}\n'.format(
+                name=name,
+                value=value,
+            )
+            yield line
+```
+]
+
+.tile1_left[
+```
+entry_points={
+    'stevedore.example.formatter': [
+        'simple = stevedore.example.simple:Simple',
+        'field = stevedore.example.fields:FieldList',
+        'plain = stevedore.example.simple:Simple',
+    ],
+},
+```
+]
+---
+
+# Loading the plugin
+.left-column[
+### Driver
+]
+
+.right-column[
+```python
+import argparse
+
+from stevedore import driver
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    'format',
+    nargs='?',
+    default='simple',
+    help='the output format',
+)
+parsed_args = parser.parse_args()
+
+mgr = driver.DriverManager(
+    namespace='stevedore.example.formatter',
+    name=parser.format,
+    invoke_on_load=True,
+)
+for chunk in mgr.driver.format(data):
+    print(chunk, end='')
+```
+]
+---
+# Loading the plugin
+.left-column[
+### Driver
+### Extension and Hook
+]
+
+.right-column[
+```python
+from stevedore import extension
+
+mgr = extension.ExtensionManager(
+    namespace='stevedore.example.formatter',
+    invoke_on_load=True,
+)
+
+def format_data(ext, data):
+    return (ext.name, ext.obj.format(data))
+
+results = mgr.map(format_data, data)
+
+for name, result in results:
+    print('Formatter: {0}'.format(name))
+    for chunk in result:
+        print(chunk, end='')
+    print('')
+```
+]
+---
+class: inverse, middle, center
+
+### Oslo
+[not the town...]
+
+---
+
+# Oslo 
+
+__Mission Statement__:
+_"To produce a set of python libraries containing code shared by OpenStack projects. The APIs provided by these libraries should be high quality, stable, consistent, documented and generally applicable."_
+---
 class: inverse
 
-# References
+## References
 
 - Pecan : http://pecan.readthedocs.org/en/latest/
-- WSME : http://wsme.readthedocs.org/en/latest/index.html
+- WSME : http://wsme.readthedocs.org/en/latest/
 - Cliff : https://cliff.readthedocs.org/en/latest/
+- Stevedore : http://stevedore.readthedocs.org/en/latest/
+- Oslo : https://wiki.openstack.org/wiki/Oslo
 
 
-- And Openstack reviews of course ! 
+- And Openstack code and reviews of course ! 
+---
+class: inverse, middle, center
+
+### You reached it ! Questions tho ?
+
     </textarea>
     <script src="http://sbauza.github.io/lib/remark-0.6.0.min.js" type="text/javascript">
     </script>
