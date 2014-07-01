@@ -138,7 +138,7 @@
 
 						- Live upgrades work to continue
 						- Third-party CI integration
-						- new Docker driver
+						- new Docker and Ironic (baremetal) drivers
 						- Scheduler split from Nova out to a new project (Gantt)
 						- Nova V3 API turned into a V2.1
 					</script>
@@ -157,17 +157,48 @@
 						- new third-party drivers (Nuage...)
 					</script>
 				</section>
-				<section>
-						<h2>Identity (Keystone)in Juno</h2>
+				<section data-markdown>
+					<script type="text/template">
+						## Identity (Keystone)
+
+						- Federation and external authentication
+						- Split of middleware code into a separate project
+						- Hierarchical multitenancy
+						- Ephemeral tokens
+					</script>
 				</section>
-				<section>
-						<h2>Image (Glance) in Juno</h2>
+				<section data-markdown>
+					<script type="text/template">
+						## Image (Glance)
+
+						- Glance Store library
+						- Artifacts repository
+						- Image inspection
+					</script>
 				</section>
-				<section>
-						<h2>Sahara</h2>
+				<section data-markdown>
+					<script type="text/template">
+						## Sahara (ex. Savanna)
+
+						- Hadoop-as-a-Service (EDP): Java, Hive, Pig, MapReduce
+						- Cluster scaling
+						- Anti-affinity support
+						- Native integration with other services (Heat, Nova, Neutron, Swift, Cinder)
+						- Data locality
+						- Multiple plugins (Vanilla, HDP, Spark)
+					</script>
 				</section>
-				<section>
-						<h2>NFV</h2>
+				<section data-markdown>
+					<script type="text/template">
+						## NFV
+
+						[Network Function Virtualization](https://wiki.openstack.org/wiki/Teams/NFV)
+
+						- Joint effort on Nova and Neutron
+						- Scope of features aimed :
+							- Workload performance (NUMA aware scheduling, SR-IOV pinning)
+							- Reliability (Rescheduling on VM failure)
+					</script>
 				</section>
 				<section data-markdown>
 					<script type="text/template">
