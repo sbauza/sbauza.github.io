@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>OpenStack 101</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>OpenStack 101</h1>
+					<h4>(OpenStack, c'est quoi ?)</h4>
+					<p>
+						<small><a href="mailto:sbauza AT_CHEZ redhat DOT_POINT com">Sylvain Bauza</a> / <a href="http://twitter.com/sylvainbauza">@sylvainbauza</a> / <a href="https://webchat.freenode.net/">bauzas (Freenode)</a></small>
+					</p>
+					<h3>DevOps @ Grenoble meetup</h3>
+					<h3>30/09/2014</h3>
+				</section>
+				<section>
+						<h2>Who am I ?</h2>
+
+						<p>OpenStack <i>Active Technical Contributor</i> (aka. bugcreator)</p>
+						<p>since <b>Havana</b> (aka. 2013.2)</p>
+						<p>on <b>Nova</b> (aka. Compute) and <b>Blazar</b> (aka. Reservations)</p>
+						<p>for Red Hat upstream (aka. <a href='http://openstack.redhat.com/'>RDO</a>)</p>
+						<p>and downstream (aka. <a href="http://www.redhat.com/products/enterprise-linux/openstack-platform/">RHEL OSP</a>)</p>
+					</script>
+				</section>
+			    <section>
+				        <h2>ONCE UPON A CLOUD...<br>
+				        </h2>
+				        <h3>Yet another virtualization layer ?</h3>
+				        <p>
+				        <br>
+				    </p>
+				    <p>What means <i>Cloud</i> (hype word ?)</p>
+				    <ul>
+				        <li>On-demand</li>
+				        <li>Network access</li>
+				        <li>Resource pooling</li>
+				        <li>Elasticity</li>
+				        <li>Metered or measured service</li>
+				    </ul>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## ONCE UPON A CLOUD...
+
+						- Forked from project Nebula (NASA) and Rackspace (Cloud Files) in July 2010
+						- Now governed by a Foundation with a Board of Directors, a Technical Committee and a User Committee
+
+						<img style="width: 384px; height: 285.474px; max-height: none; max-width: none;" src="src/monthly_contribs.jpg">
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Mission statement
+
+						*To produce the ubiquitous Open Source Cloud Computing platform that will meet the needs of public and private clouds regardless of size, by being simple to implement and massively scalable.*
+
+						(ouf.)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## But what is OpenStack ?
+
+						![Openstack Logical diagram](src/openstack-software-diagram.png)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## But what is OpenStack ? (cont.)
+
+						![Openstack Conceptual diagram](src/openstack-conceptual-diagram.jpg)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## OpenStack as layers
+
+						![Openstack as Layers](src/openstack_layers.png)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## OpenStack Design Tenets
+
+						- Scalability and elasticity as goals
+						- Everything should be asynchronous
+						- All required components must be horizontally scalable
+						- Always use shared nothing architecture (SN) or sharding
+						- Distribute everything. Especially logic.
+						- Accept eventual consistency and use it where it is appropriate
+
+						[https://wiki.openstack.org/wiki/BasicDesignTenets](https://wiki.openstack.org/wiki/BasicDesignTenets)
+					</script>
+				</section>				
+				<section data-markdown>
+					<script type="text/template">
+						## Compute (Nova)
+						### Provision and manage virtual machines
+
+						- Manage commodity server resources (baremetal and virtualized, ARM and x86)
+						- Live VM management (suspend/resume, migrate, resize, etc.)
+						- VM Image Caching on compute nodes
+						- Multiple supported hypervisors (KVM, Xen, Hyper-V, VMWare ESX, Docker in test)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Compute (Nova)
+						### Provision and manage virtual machines
+
+						![Nova instances](src/launching-instances.jpg)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Network (Nova _or_ Neutron)
+
+						- Flexible networking models (flat networks, VLANs, SDNs)
+						- IPs management (external/internal)
+						- Traffic flow control (dataplane and controlplane segregation)
+						- Vendor-supported (Mellanox, VMWare, Nuage...) or community (ML2, OpenVSwitch) drivers
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Block Storage (Cinder)
+
+						- Block-level storage devices (LVM as default)
+						- Vendor-supported drivers (Nexenta, NetApp, SolidFire...)
+						- Integration with Ceph RBD
+						- Boot From Volume feature for Compute instances
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Object Storage (Swift)
+
+						- Distributed storage system for static data
+						- Scalability and redundancy natively
+						- Self-healing (well, sort of... :-) )
+						- Supports AWS S3 API
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## _Shared Services_
+
+						- Identity Service (Keystone)
+						- Image Service (Glance)
+						- Orchestration Service (Heat)
+						- Telemetry Service (Ceilometer)
+						- Database Service (Trove)
+						- and others incubated (TripleO, Marconi, Sahara...)
+					</script>
+				</section>
+				<section>
+						<h2>Release cycle and Roadmap</h2>
+						<p></p>
+						<ul>
+							<li>Now every <a href="http://docs.openstack.org/training-guides/conte nt/module001-ch003-core-projects.html">6 months</a></li>
+							<li>Releases with codename (Austin, Bexar, Cactus, Diablo, Essex, Folsom, Grizzly, Havana, Icehouse and next Juno)</li>
+							<li><a href="http://git.openstack.org/cgit/openstack/governance/tree/reference/programs.yaml">Project maturation cycle</a> (stackforge, incubation, integrated, DefCore)</li>
+							<li>Stable branch for <a href="https://wiki.openstack.org/wiki/Releases">1 cycle</a>, security supported for 2 cycles</li>
+							<li><a href="https://wiki.openstack.org/wiki/Juno_Release_Schedule">Release cycle</a> with Design Summit, 3 milestones, RCs and GA</li>
+						</ul>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Decisions to take
+
+						- Which deployment will I take ? (see later)
+						- Which driver(s) will I use ?
+						- Which components will I need ?
+						- Production or testing ?
+						- HA or not HA ?
+						- Live upgrades ?
+						- Which applications will I run on top of my cloud ?
+					</script>
+				</section>				
+				<section data-markdown>
+					<script type="text/template">
+						## Testing and Deploying
+
+						- DevStack [all-in-one](http://devstack.org/)
+						- Try a [public cloud](http://www.openstack.org/marketplace/public-clouds/)
+						- Deploy a [distro](http://www.openstack.org/marketplace/distros/)
+						- [Install OpenStack](http://docs.openstack.org/icehouse/install-guide/install/yum/content/) on top of an existing OS
+						- Leave [others](http://www.openstack.org/marketplace/consulting/) do it for you
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## What about Configuration Management tools ?
+
+						- Puppet
+						- Chef
+						- Ansible
+						- CFEngine, Saltstack, etc.
+						- Really for controlplane or for workloads ?
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Finally, what about the applications ?
+
+						- **Think "cloud-ready"**
+						- Stateless
+						- Distributed 
+						- Scale out
+						- Consistent
+
+						Wait ! Is it not the OpenStack design tenets ?  <!-- .element: class="fragment" data-fragment-index="2" -->
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Finally, what about the applications ? (cont.)
+
+						- Configuration management tools for the instances
+						- Heat for orchestrating the instances and their workloads
+						- Use of cloud images with cloud-init
+					</script>
+				</section>
+				<section>
+						<h2>Going further...</h2>
+						<p><a href="http://docs.openstack.org">http://docs.openstack.org</a></p>
+						<ul>
+							<li>IRC #openstack and #openstack-fr on <a href="www.freenode.org">Freenode</a></li>
+							<li>Mailing-list openstack@lists.openstack.org (and archives !)</li>
+							<li>Mailing-list openstack-fr@lists.openstack.org</li>
+						</ul>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Want to contribute ?
+
+						- Should I tell you the [story](src/openstack_salaries.png) ?
+						- Want to code ? Do Python and Git
+						- Want to review changes ? Do Gerrit
+						- Want to document ? We love you !
+						- Want to report bugs ? Guy, you rock !
+						- Want to fix bugs ? You are awesome !
+
+						[https://wiki.openstack.org/wiki/How_To_Contribute](https://wiki.openstack.org/wiki/How_To_Contribute)
+					</script>
+				</section>
+				<section>
+						<h2>Questions ?</h2>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
