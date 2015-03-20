@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Docker, what else ?</title>
+
+		<meta name="author" content="Sylvain Bauza">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/perso.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Docker, what else?</h1>
+					<h4>(c) George.</h4>
+					<p>
+						<small><a href="mailto:sbauza AT_CHEZ redhat DOT_POINT com">Sylvain Bauza</a> / <a href="http://twitter.com/sylvainbauza">@sylvainbauza</a> / <a href="https://webchat.freenode.net/">bauzas (Freenode)</a></small>
+					</p>
+					<h3>Docker Grenoble meetup</h3>
+					<h3>19/03/2015</h3>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Who am I ?
+
+						- FOSS contributor to [OpenStack](http://www.openstack.org)
+						- Working for Red Hat (@home)
+						- [OpenStack Rhone-Alpes](http://www.meetup.com/OpenStack-Rhone-Alpes/) meetup co-organizer
+						- OpenStack Upstream Training mentor
+						- Found a bug on Nova ? Not me ;-)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## So... Docker ?
+
+						![Dockah](src/dockah.gif)
+
+					</script>
+				</section>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## So... Docker ?
+
+						![Cargo loading containers](src/cargo_loading_containers.jpg)
+
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## So... Docker*s* ?
+
+						![Hundred cargos](src/hundred_cargos.jpg)
+
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Kubernetes !
+
+						![Kubernetes ship](src/kubernetes-ship4.png)
+
+					</script>
+				</section>
+		        <section>
+		        	<h2>Kubernetes</h2>
+		        	<p>In old Greek, "<i>Steersman, helmsman, sailing master</i>"</p>
+		        	<p><strong><span style="color: #F00;">Φ</span>ιλοσοφία <span style="color: #F00;">Β</span>ιοῦ <span style="color: #F00;">Κ</span>υβερνήτης</strong><br /><a href="http://en.wikipedia.org/wiki/Phi_Beta_Kappa_Society">"Love of wisdom is the guide of life"</a></p>
+		        </section>
+		        <section>
+		          <h2>Docker is not...</h2>
+		          <ol>
+		          		<li>cluster-centric</li>
+	   		            <li>declarative</li>
+		          		<li>able to scale and schedule thru a massive deployment</li>
+		          </ol>
+		          <h3>Solution:</h3>
+		          <div class="fragment">
+		            <img width="30%" src="src/docker_compose_unoff_logo.png" alt="Docker Compose logo"/>
+		            <h4>Docker Entreprise (Swarm and Compose)</h4>
+		          </div>
+		        </section>
+				<section data-markdown>
+					<script type="text/template">
+						## Erm, and Kubernetes ?
+
+						![Kubernetes logo](src/k8s_logo.png)
+					</script>
+				</section>
+				<section>
+					<h2>Want a big picture ?</h2>
+					<img width="75%" src="src/architecture-large.png" alt="K8S big picture"/>
+				</section>
+		        <section>
+		        	<h2>Kubernetes Node</h2>
+		        	<table style="margin-left: auto; margin-right: auto;  font-size: 30px;">
+		        		<tr>
+		        			<td><img style="border: 0px; width: 100%;" src="src/k8s-minion.png" alt="Kubernetes minion diagram" /></td>
+		        			<td>&nbsp;</td>
+		        			<td style="vertical-align: middle;">
+		        				<dl>
+		        					<dt>Minion</dt>
+		        					<dd><small>(Or "Kubernetes Node"; the name is evolving)</small><br />A Docker host running the <em>kubelet</em> and the <em>proxy</em> service.<br />&nbsp;</dd>
+		        					<dt>Pod</dt>
+		        					<dd>One or more inter-related (linked) Docker containers.<br />&nbsp;</dd>
+		        					<dt>Cluster</dt>
+		        					<dd>A collection of one or more Minions.</dd>
+		        				</dl>
+		        			</td>
+		        		</tr>
+		        	</table>
+		        </section>
+		        <section>
+		        	<h2>Minion Daemon:<br /><code>kubernetes-kubelet</code></h2>
+		        	<img style="border: 0px;" src="src/kubelet.png" alt="Kubelet works between etcd and docker." />
+		        	<ul>
+		        		<li>Primary responsilibity: pod management</li>
+		        		<li>Maintain a record of pod state</li>
+		        		<li>Take instructions from the cluster <em>master</em></li>
+		        	</ul>
+		        </section>
+		        <section>
+		        	<h2>Minion Daemon:<br /><code>kubernetes-proxy</code></h2>
+		        	<img style="border: 0px; height: 200px;" src="src/kubernetes_proxy.png" alt="The proxy maps a single port on the minion to all relevant pods" />
+		        	<p>&nbsp;</p>
+		        	<ul>
+		        		<li>Forward requests to the right container</li>
+		        		<li>Load-balance requests</li>
+		        		<li>Ensure minion subnet isolation</li>
+		        	</ul>
+		        </section>
+		        <section>
+		        	<h2>etcd</h2>
+		        	<ul>
+		        		<li>Highly available key/value data store</li>
+		        		<li>Built-in clustering support</li>
+		        		<li>RAFT consensus-based algorithm for updates</li>
+		        	</ul>
+		        	<img src="src/etcd_raft_consensus.gif" alt="Visualization of raft consensus" />
+		        </section>
+		        <section>
+		          <h2>Cluster Management</h2>
+		          <table style="margin-left: auto; margin-right: auto; font-size: 26px;">
+		            <tr>
+		              <td><img style="border: 0px; width: 100%;" src="src/k8s-master.png" alt="Kubernetes cluster master diagram" /></td>
+		              <td>&nbsp;</td>
+		              <td style="vertical-align: middle;">
+		                <dl>
+		                  <dt>Kubernetes API</dt>
+		                  <dd>RESTful web API for Kubernetes, running on nginx<br />&nbsp;</dd>
+		                  <dt>Scheduler</dt>
+		                  <dd>One job: choose minions for pods<br />&nbsp;</dd>
+		                  <dt>Controller Manager</dt>
+		                  <dd>Monitoring service for deployed pods<br />&nbsp;</dd>
+		                  <dt><code>kubecfg</code></dt>
+		                  <dd><small>(A newer iteration of this is now called <em>kubectl</em> )</small><br />CLI for working with a Kubernetes cluster</dd>
+		                </dl>
+		              </td>
+		            </tr>
+		          </table>
+		        </section>
+		        <section>
+		          <h2>Replication Controllers</h2>
+		          <table style="margin-left: auto; margin-right: auto;">
+		            <tr>
+		              <td><img src="src/controller_manager.png" alt="You tell controller-manager what you need, and it does the rest." /></td>
+		              <td>&nbsp;</td>
+		              <td style="vertical-align: middle;">
+		                <ul>
+		                  <li>You tell it what you need, it decides which minions to deploy on</li>
+		                  <li>Constant monitoring; starts and stops pods as necessary to match the count</li>
+		                  <li>Decoupled from service proxying</li>
+		                </ul>
+		              </td>
+		            </tr>
+		          </table>
+		        </section>
+		        <section>
+		          <h2>kubectl</h2>
+		          <p>Get details on resource(s)</p>
+		          <pre><code data-trim contenteditable>$ kubectl get pods|services|rc|...</code></pre>
+		          <p>Create a resource</p>
+		          <pre><code data-trim contenteditable>$ kubectl create -f some/body.[json|yaml]</code></pre>
+		          <p>Resize a ReplicationController</p>
+		          <pre><code data-trim contenteditable>$ kubectl resize --replicas=3 foo</code></pre>
+		          <p>Execute a command on a container</p>
+		          <pre><code data-trim contenteditable>$ kubectl exec -p 123456-7890 -c ruby-container -i -t -- bash -il</code></pre>
+		        </section>
+		        <section>
+		            <h2>The Kubernetes API</h2>
+		            <ul>
+		                <li>Minions (docker hosts)</li>
+		                <li>Pods (docker container configurations)</li>
+		                <li>Services (single, stable name for a set of pods, acts as a LB)</li>
+		                <li><em>Replication Controllers</em> (manages the lifecycle of the pods)</li>
+		                <li>Labels</li>
+		            </ul>
+		            <a href="https://github.com/GoogleCloudPlatform/kubernetes/tree/master/examples/">
+		            	<img style="width: 20%; " src="src/minion_left_hand.jpg" alt="Google examples (eh I'm a minion)"/>
+		            </a>
+		        </section>
+		        <section>
+		        	<h2>Labels</h2>
+		        	<img style="height: 200px; background-color: #FFF;" src="src/labels.jpg" alt="A lot of labels" />
+		        	<ul>
+		        		<li>A label or consists of a key and a value (also called a <em>selector</em>)</li>
+		        		<li>A pod can have any number of labels; each label must have a unique <em>key</em></li>
+		        		<li>Examples: <code>service=nginx</code>, <code>environment=prod</code>, <code>tier=frontend</code></li>
+		        	</ul>
+		        </section>
+		        <section>
+		        	<h2>Pods</h2>
+		        	<pre><code data-trim contenteditable>
+{
+  "id": "redis-master-pod",
+  "kind": "Pod",
+  "apiVersion": "v1beta1",
+  "desiredState": {
+    "manifest": {
+      "version": "v1beta1",
+      "id": "redis-master-pod",
+      "containers": [{
+        "name": "redis-master",
+        "image": "gurpartap/redis",
+        "ports": [{ "name": "redis-server", "containerPort": 6379 }]
+      }]
+    }
+  },
+  "labels": {"name": "redis"}
+}
+		        	</code></pre>
+		        </section>
+		        <section>
+		        	<h2>Services</h2>
+		        	<pre><code data-trim contenteditable>
+{
+  "id": "redis-master",
+  "kind": "Service",
+  "apiVersion": "v1beta1",
+  "port": 8888,
+  "containerPort": 6379,
+  "selector": {
+    "name": "redis"
+  },
+  "labels": {"name": "redis"}
+}
+		        	</code></pre>
+		        </section>
+		        <section>
+		        	<h2>Service env vars</h2>
+		        	<pre><code data-trim contenteditable>
+REDIS_PORT='tcp://10.0.29.247:8888'
+REDIS_PORT_6379_TCP='tcp://10.0.29.247:8888'
+REDIS_PORT_6379_TCP_ADDR='10.0.29.247'
+REDIS_PORT_6379_TCP_PORT='8888'
+REDIS_PORT_6379_TCP_PROTO='tcp'
+REDIS_SERVICE_PORT='8888'
+REDIS_SERVICE_HOST='10.0.29.247'
+		        	</code></pre>
+		        </section>
+		        <section>
+		        	<h2>Replication Controllers</h2>
+		        	<pre><code data-trim contenteditable>
+{
+  "id": "redisSlaveController",
+  "kind": "ReplicationController",
+  "apiVersion": "v1beta1",
+  "desiredState": {
+    "replicas": 2,
+    "replicaSelector": {"name": "redisslave"},
+    "podTemplate": {
+      "desiredState": {
+         "manifest": {
+           "version": "v1beta1",
+           "id": "redisSlaveController",
+           "containers": [{
+             "name": "slave",
+             "image": "brendanburns/redis-slave",
+             "ports": [{"containerPort": 6379, "hostPort": 8888}]
+           }]
+         }
+       },
+       "labels": {"name": "redisslave"}
+      }},
+  "labels": {"name": "redisslave"}
+}
+		        	</code></pre>
+		        </section>
+
+				<section data-markdown>
+					<script type="text/template">
+						## Want to play with ?
+
+						- as a Service on GCE ($$$)
+						- as a Service using OpenShift
+						- Vagrant
+						- Using a CMS like Ansible
+						- Cloud (GCE, AWS, OpenStack...)
+						- By hand (yum, yum, yum...)
+						- CoreOS or Atomic
+
+						http://kubernetes.io
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Eh, you said what?
+
+						![CoreOS logo](src/coreos.png) ![Atomic logo](src/atomic.png) 
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Happy with vanilla Docker ?
+
+						- OS footprint
+						- Networking services
+						- Filesystem
+						- Deployment and upgrades
+
+						![XKCD The Cloud](src/xkcd_the_cloud.png)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Docker Machine ?
+
+						![Docker Machine](src/docker-machine.png)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## CoreOS and Atomic
+
+						- Lightweight OSes
+						- Docker native support
+						- OS is updated as a whole, not package-by-package
+						- Support deploying containers across a cluster
+
+						![Duracell bunny](src/duracell_bunny.jpg)
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Atomic
+
+						![Atomic v1](src/atomic-v1.png)
+					</script>
+				</section>
+
+		        <section>
+		            <h2>Cockpit UI (beta)</h2>
+		          <table style="margin-left: auto; margin-right: auto;">
+		            <tr>
+		              <td>
+		              	<img style="width: 400%; " src="src/cockpit-screenshot.png" alt="Cockpit dash"/>
+		              </td>
+		              <td>&nbsp;</td>
+		              <td style="vertical-align: middle;">
+		              	<img style="width: 100%; " src="src/cockpit-docker-pull.png" alt="Cockpit docker pull"/>
+		              </td>
+		            </tr>
+		          </table>
+		        </section>
+				<section data-markdown>
+					<script type="text/template">
+						## Playing with Atomic
+
+						- **Fedora 21**, **CentOS7** and **RHEL7** QCOW2 'Atomic' images
+						- VirtualBox compatible
+						- *cloud-init* ready
+						- Old baremetal installer available
+
+						http://www.projectatomic.io/download/
+						http://www.projectatomic.io/docs/quickstart/
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## K8S and Atomic
+
+						- Use systemd to start your processes
+						- Flanneld for the network
+						- Kubectl as usual...
+
+						http://www.projectatomic.io/docs/gettingstarted/
+					</script>
+				</section>
+
+				<section>
+						<h2>That's it !</h2>
+						<h2>Questions ?</h2>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
