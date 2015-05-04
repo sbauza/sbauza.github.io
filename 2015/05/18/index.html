@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Enhancing OpenStack Projects with Advanced SLA and Scheduling</title>
+
+		<meta name="description" content="Description">
+		<meta name="author" content="Author">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		
+		
+		<!-- set the theme to white-rh - white background -->
+		<link rel="stylesheet" href="css/theme/white-rh.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf-rh.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+		
+		<!-- Begin added by SCE -->
+		<!-- script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script -->
+		<script type="text/javascript" src="plugin/jquery/jquery.min.js"></script>
+		<!-- script src="http://code.highcharts.com/highcharts.js"></script -->
+		<script src="plugin/highcharts/highcharts.js"></script>
+		<!-- script src="http://code.highcharts.com/modules/exporting.js"></script -->
+		<script src="plugin/highcharts/exporting.js"></script>
+		
+
+		<style type="text/css">
+                        .rh-header {
+                           position: relative;
+                           width: 100%;
+                           height: 50px;
+                           text-align: center;
+                           font-family: "Overpass", "Liberation Sans", sans-serif;
+                           font-size: 18px;
+                           font-weight: normal;
+                           letter-spacing: -0.02em;
+                           color: #eeeeee;
+                        }
+			.ribbon {
+			   position: absolute;
+			   top: 10px;
+			   right: 10px;
+         border: none;
+			}
+			p { text-align: left; }
+
+			.reveal table th,
+			.reveal table td {
+			  text-align: left;
+			  padding: 0.2em 0.5em 0.2em 0.5em;
+			  border-bottom: 1px solid; }
+			.reveal table tr:last-child td { border-bottom: none; }
+		</style>
+		
+		<!-- end content added by SCE --> 
+			
+			
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides"> 
+				      <section data-markdown>
+        <script type="text/template">
+          <section data-background="images/rh_vancouver_bg.jpg" data-transition="slide">
+<table>
+  <tr>
+    <td style="width: 50%;"><img src="images/redhat.png" style="border: none; box-shadow: none; background: none; width: 30%;"/>
+    <td style="width: 50%; text-align: right;"><img src="images/intel.png" style="border: none; box-shadow: none; background: none; width: 20%;"/>
+  </tr>
+</table>
+<h1 align=left>Enhancing OpenStack Projects</h1>
+<h1 align=left>with Advanced SLA and Scheduling</h1>
+
+<h2 align=left style='color: #fff;'>Deep dive in the Nova scheduler</h2>
+<br/>
+
+<table width=100%>
+  <tr >
+    <td style="width: 50%;"><h3 style='color: #fff;'>Sylvain Bauza<br/>Senior Sofware Engineer, Red Hat<br/></h3>
+    <td style="width: 50%; text-align: right;"><h3 style='color: #fff;'>Don Dugger<br/>Title XXXX, Intel<br/></h3>
+  </tr>
+</table>
+<br/>
+<h3 align=center style='color: #fff;'>2015/05/18, OpenStack Summit Vancouver<br/></h3>
+
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+          ## SLA, you said ?
+
+          *"An agreement between an IT Service Provider and a Customer"* (ITIL v3)
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+          <section data-background="images/rh_vancouver_divider_bg.jpg">
+
+          # The engine
+          # under the hood
+
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Want a big picture ?
+<div style="text-align: center;">
+<img src="images/nova-diagram.png" alt="Nova diagram"></div>
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Not only one scheduler...
+          - FilterScheduler
+          - ChanceScheduler
+          - CachingScheduler
+          <br/><br/>
+          - YourOwnScheduler
+
+          <small>``scheduler_driver=nova.scheduler.filter_scheduler.FilterScheduler``</small>
+
+        </script>
+      </section>
+
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## FilterScheduler
+
+<div style="text-align: center;">
+<img style="width: 50%;" src="images/filter-scheduler.png" alt="FilterScheduler filters"></div>
+
+        </script>
+      </section>
+
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Filters
+
+          Activate the filters :
+          <small>
+          ``scheduler_available_filters=nova.scheduler.filters.all_filters``</small>
+
+          Enable the filters :
+          <small>
+          ``scheduler_default_filters=RetryFilter,AvailabilityZoneFilter,RamFilter,
+           ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,
+           ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter``
+           </small><br/><br/>
+           ... and many others
+
+           <center>http://docs.openstack.org/developer/nova/devref/filter_scheduler.html</center>
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+## Filter example
+<pre><code class="python" data-trim>
+class ExactRamFilter(filters.BaseHostFilter):
+    """Exact RAM Filter."""
+
+    def host_passes(self, host_state, filter_properties):
+        """Return True if host has the exact amount of RAM available."""
+        instance_type = filter_properties.get('instance_type')
+        requested_ram = instance_type['memory_mb']
+        if requested_ram != host_state.free_ram_mb:
+            LOG.debug("%(host_state)s does not have exactly "
+                      "%(requested_ram)s MB usable RAM, it has "
+                      "%(usable_ram)s.",
+                      {'host_state': host_state,
+                       'requested_ram': requested_ram,
+                       'usable_ram': host_state.free_ram_mb})
+            return False
+
+        return True
+</code></pre>
+        </script>
+      </section>
+
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## FilterScheduler weighers
+
+<div style="text-align: center;">
+<img style="width: 50%;" src="images/filter-scheduler-weights.png" alt="FilterScheduler weighers"></div>
+
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Weighers (cont.)
+<pre><code data-trim>
+    weight = w1_multiplier * norm(w1) + w2_multiplier * norm(w2) + ...
+</code></pre>
+
+          Enable the weighers :
+          <small>
+          ``scheduler_weight_classes=nova.scheduler.weights.all_weighers``</small>
+
+          Current weighers :
+
+          - RAMWeigher
+          - IoOpsWeigher
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Anatomy of a scheduling request - part 1
+
+
+<div style="text-align: center;">
+<img style="width: 50%;" src="images/resourcetracker.png" alt="ResourceTracker"></div>
+
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Anatomy of a scheduling request - part 2
+
+
+<div style="text-align: center;">
+<img style="width: 50%;" src="images/scheduling_request.png" alt="Scheduling request"></div>
+
+        </script>
+      </section>
+      <section data-markdown>
+        <script type="text/template">
+          <section data-background="images/rh_vancouver_divider_bg.jpg">
+
+          # _Divide ut regnes_
+          # your cloud
+
+        </script>
+      </section>
+
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## What kind of segregation ?
+
+          - Physical
+            - ~~Regions~~ (Keystone related)
+            - Cells
+            - Aggregates
+            - Availability Zones (think OpenStack, please !)
+          - Virtual
+            - Server Groups
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Aggregates
+
+          - Groups of hosts (one host can be in multiple aggregates)
+          - Non user-facing
+          - Metadata-based
+
+          - Related filters :
+            - AggregateImagePropertiesIsolation
+            - AggregateInstanceExtraSpecsFilter
+            - AggregateMultiTenancyIsolation
+            - AggregateCoreFilter
+            - and others...
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## AggregateInstanceExtraSpecsFilter example
+
+<pre><code class="bash">
+$ nova aggregate-create fast-io nova
++----+---------+-------------------+-------+----------+
+| Id | Name    | Availability Zone | Hosts | Metadata |
++----+---------+-------------------+-------+----------+
+| 1  | fast-io | nova              |       |          |
++----+---------+-------------------+-------+----------+
+
+$ nova aggregate-set-metadata 1 ssd=true
++----+---------+-------------------+-------+-------------------+
+| Id | Name    | Availability Zone | Hosts | Metadata          |
++----+---------+-------------------+-------+-------------------+
+| 1  | fast-io | nova              | []    | {u'ssd': u'true'} |
++----+---------+-------------------+-------+-------------------+
+</code></pre>
+        </script>
+      </section>
+
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## AggregateInstanceExtraSpecsFilter example
+
+<pre><code class="bash" data-trim>
+
+$ nova aggregate-add-host 1 node1
++----+---------+-------------------+-----------+-------------------+
+| Id | Name    | Availability Zone | Hosts      | Metadata          |
++----+---------+-------------------+------------+-------------------+
+| 1  | fast-io | nova              | [u'node1'] | {u'ssd': u'true'} |
++----+---------+-------------------+------------+-------------------+
+</code></pre>
+
+
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## AggregateInstanceExtraSpecsFilter example
+
+<pre><code class="bash" data-trim>
+
+$ nova flavor-create ssd.large 6 8192 80 4
++----+-----------+-----------+------+-----------+------+-------+-------------+-----------+-------------+
+| ID | Name      | Memory_MB | Disk | Ephemeral | Swap | VCPUs | RXTX_Factor | Is_Public | extra_specs |
++----+-----------+-----------+------+-----------+------+-------+-------------+-----------+-------------+
+| 6  | ssd.large | 8192      | 80   | 0         |      | 4     | 1           | True      | {}          |
++----+-----------+-----------+------+-----------+------+-------+-------------+-----------+-------------+
+
+$ nova flavor-key ssd.large set ssd=true
+
+$ nova boot --flavor ssd.large myvm
+</code></pre>
+        </script>
+      </section>
+
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Availability Zones
+
+          - Groups of hosts (only one AZ per host)
+          - User-facing (explicit boot command option)
+          - Aggregate with a specific metadata key (``availability_zone``)
+
+          - Related filter :
+            - AvailabilityZoneFilter
+</br></br><center>
+<pre><code class="bash" data-trim>
+$ nova boot --availability-zone az1 myvm
+</code></pre></center>
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Server Groups
+
+          - Groups of _instances_
+          - User-facing
+          - Specific metadata called _policy_ (anti-affinity/affinity)
+
+          - Related filters :
+            - ServerGroupAntiAffinityFilter
+            - ServerGroupAffinityFilter
+</br></br><pre><code class="bash" data-trim>
+$ nova server-group-create --policy anti-affinity group-1
+$ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
+</code></pre>
+        </script>
+      </section>
+
+      <section data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide">
+
+      <h2>Cells</h2>
+      <ul>
+       <li>Experimental
+      </ul>
+      <ul class="fadelist">
+       <li>Experimental
+       <li>Experimental
+       <li>Did I say, experimental ? 
+      </ul>
+      <p class="fragment grow"><center>Teasing Cells V2 : <a href="http://docs.openstack.org/developer/nova/devref/cells.html#manifesto">http://docs.openstack.org/developer/nova/devref/cells.html#manifesto</a></center></p>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+          <section data-background="images/rh_vancouver_divider_bg.jpg">
+
+          # OK, but what limitations ?
+          ### (Unclassified information)
+
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Exhibit A
+
+          Did you enjoy troubleshooting a failing scheduling request ?
+          </br></br>
+          <center>Think about nova.conf
+          <pre><code data-trim>debug = True</code></pre></center>
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Exhibit B
+
+          Do you like races ?
+
+          - Computes nodes updating each 60 secs
+          - Want multiple schedulers ? Bad idea.
+        </script>
+      </section>
+
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Exhibit C
+
+          Scheduler performance
+
+          - Scheduler scales per request (DB call)
+          - ``CachingScheduler`` can help
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Exhibit D
+
+          Technical debt
+
+          - Interfaces with other Nova components
+          - Compute Claims
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Kilo efforts
+
+          - Tech debt reduction
+            - Separation between service and compute nodes
+            - Modify how the filters get information from the HostManager
+            - Tests refactoring
+          - New scheduler client
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ##  Hoping for Liberty
+
+          Subject to discussion at the Design Summit
+          
+          - Tech debt reduction (again)
+            - Clean-up the interfaces between the scheduler and Nova
+            - Scrub the logs for helping operators
+            - Shared-state scheduler
+          - Allocation ratios to the ResourceTracker
+          - _Scheduler repository split_
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ##  Wait, what ?
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+          <section data-background="images/rh_vancouver_divider_bg.jpg">
+
+          # Manifesto for
+          # better scheduling
+
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## You promised me _Advanced_ SLA, right ?
+
+          - Yeah, let me tell you some stories...
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Pets vs. Cattle story
+
+          - OpenStack == cloud
+          - Private / Public / Hybrid
+          - Think about .aaS
+          - _"What if I want golden VMs ?"_
+
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## The Affinity story
+
+          - _"I want a boot-from-volume VM on the same rack than my SAN bay"_
+          - _"I want a VM with at least 1GBps bandwidth port"_
+          - _"I want my containers from the same pod not on the same machine"_
+        </script>
+      </section>
+
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## The Modularity story
+
+          - Do you need to update all the resources ?
+          - Do you need all filters ?
+          - Do you want to add some extra resources ?
+        </script>
+      </section>
+
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## The AWS story
+
+          - I want to have spot-instances in OpenStack
+        </script>
+      </section>
+
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Towards the road
+
+          - We need a better velocity for improving the scheduler features
+          - We need to reduce the inherited technical debt
+          - How to tackle all these efforts ?
+            - The ~~Gantt~~ Nova-scheduler team
+            - Splitting the code ? A new project ?
+            - Your help is welcome
+        </script>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+          <section data-background="images/rh_vancouver_divider_bg.jpg">
+
+          # Thank you
+
+        </script>
+      </section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+		
+		
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+				// The "normal" size of the presentation, aspect ratio will be preserved
+    				// when the presentation is scaled to fit different resolutions. Can be
+    				// specified using percentage units.
+				width: 1920,
+				height: 1080,
+        margin: 0,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+        				// Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+
+				        // Interpret Markdown in <section> elements
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+
+        				// Syntax highlight for <code> elements
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+
+        				// Zoom in and out with Alt+click
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+
+        				// Speaker notes
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+
+        				// Remote control your reveal.js presentation using a touch device
+					// Visit remot.io to configure
+        				//{ src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } },
+
+					// socket.io for multiplexing
+					//{ src: 'http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true },
+					//{ src: 'plugin/socket.io/socket.io.min.js', async: true },
+					//{ src: 'plugin/multiplex/client.js', async: true }
+					//{ src: 'plugin/multiplex/master.js', async: true }
+				]
+			});
+			
+			Reveal.addEventListener( 'slidechanged', function( event ) {
+			    // redrawChart();     
+			} );
+
+		</script>
+
+	</body>
+</html>
+
+
+<!--
+
+Missed : 
+- RetryFilter (mecanisme)
+- Allocation ratios
+- RequestSpec persistence 
+- Graphs pour aggregats etc/
++4 mins ! - 3/4 qs.
+-->
