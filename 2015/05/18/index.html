@@ -84,7 +84,7 @@
 
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides"> 
-				      <section data-markdown>
+			<section data-markdown>
         <script type="text/template">
           <section data-background="images/rh_vancouver_bg.jpg" data-transition="slide">
 <table>
@@ -106,17 +106,44 @@
   </tr>
 </table>
 <br/>
-<h3 align=center style='color: #fff;'>2015/05/18, OpenStack Summit Vancouver<br/></h3>
+<h3 align=center style='color: #fff;'>2015/05/18 - OpenStack Liberty Summit, Vancouver BC<br/></h3>
+      <aside class="notes">
+      Introduce ourselves: <br/>
+      - our job</br>
+      - what we do for Nova</br>
+      - how long are we working on the project
+      </aside>
+           </section>
+        </script>
+      </section>
 
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+          ## Agenda
+
+          - Scheduler 101
+          - How to split your cloud
+          - Scheduler status snapshot
+          - Next steps
+      <aside class="notes">
+      Be quick, not detailed...
+      </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
           ## SLA, you said ?
 
           *"An agreement between an IT Service Provider and a Customer"* (ITIL v3)
+      <aside class="notes">
+      Explain why we use the wording SLA to define the Scheduler</br>
+      The users *wants* something, the scheduler *provides* something</br>
+      This is the only place in a boot request where a contract is made.
+      </aside>
         </script>
       </section>
 
@@ -132,17 +159,20 @@
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Want a big picture ?
 <div style="text-align: center;">
 <img src="images/nova-diagram.png" alt="Nova diagram"></div>
+      <aside class="notes">
+      Dont take too much on that, just present the components to make sure that newcomers know that.
+      </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Not only one scheduler...
           - FilterScheduler
@@ -152,31 +182,39 @@
           - YourOwnScheduler
 
           <small>``scheduler_driver=nova.scheduler.filter_scheduler.FilterScheduler``</small>
-
+      <aside class="notes">
+      Explain the 3 schedulers and explain how its easy to add an out-of-tree scheduler
+      </aside>
         </script>
       </section>
 
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## FilterScheduler
 
 <div style="text-align: center;">
 <img style="width: 50%;" src="images/filter-scheduler.png" alt="FilterScheduler filters"></div>
 
+        <aside class="notes">
+        40 secs max for this slide, just say that each filter just provides a subset until there are a result of X hosts that are then randomly picked one per instance.</br>
+        Explain that each filter only returns for each host True or False.</br>
+        Keep the explanation of the weighting for a later slide
+        </aside>
         </script>
       </section>
 
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Filters
 
           Activate the filters :
+
           <small>
           ``scheduler_available_filters=nova.scheduler.filters.all_filters``</small>
 
@@ -188,60 +226,36 @@
            </small><br/><br/>
            ... and many others
 
-           <center>http://docs.openstack.org/developer/nova/devref/filter_scheduler.html</center>
+           <p style="text-align: center;">http://docs.openstack.org/developer/nova/devref/filter_scheduler.html</p>
+        <aside class="notes">
+        - Not all filters are default in nova.conf, you need to *check* add the ones you want </br>
+        - You can add out-of-tree filters </br>
+        - Brief overview of the given filters
+        </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
-
-## Filter example
-<pre><code class="python" data-trim>
-class ExactRamFilter(filters.BaseHostFilter):
-    """Exact RAM Filter."""
-
-    def host_passes(self, host_state, filter_properties):
-        """Return True if host has the exact amount of RAM available."""
-        instance_type = filter_properties.get('instance_type')
-        requested_ram = instance_type['memory_mb']
-        if requested_ram != host_state.free_ram_mb:
-            LOG.debug("%(host_state)s does not have exactly "
-                      "%(requested_ram)s MB usable RAM, it has "
-                      "%(usable_ram)s.",
-                      {'host_state': host_state,
-                       'requested_ram': requested_ram,
-                       'usable_ram': host_state.free_ram_mb})
-            return False
-
-        return True
-</code></pre>
-        </script>
-      </section>
-
-
-      <section data-markdown>
-        <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## FilterScheduler weighers
 
 <div style="text-align: center;">
 <img style="width: 50%;" src="images/filter-scheduler-weights.png" alt="FilterScheduler weighers"></div>
-
+        <aside class="notes">
+        Weighers are poundering each host based on a specific metric. That sorts the list of hosts.
+        </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Weighers (cont.)
-<pre><code data-trim>
-    weight = w1_multiplier * norm(w1) + w2_multiplier * norm(w2) + ...
-</code></pre>
-
           Enable the weighers :
+
           <small>
           ``scheduler_weight_classes=nova.scheduler.weights.all_weighers``</small>
 
@@ -249,48 +263,78 @@ class ExactRamFilter(filters.BaseHostFilter):
 
           - RAMWeigher
           - IoOpsWeigher
+        <aside class="notes">
+        Again, totally modular for out-of-tree. Explain the two weighers.
+        </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
-          ## Anatomy of a scheduling request - part 1
+          ## Resource Tracking
 
 
 <div style="text-align: center;">
-<img style="width: 50%;" src="images/resourcetracker.png" alt="ResourceTracker"></div>
+<img style="width: 50%;" src="sources/sched_part1.png" alt="ResourceTracker writes DB"></div>
 
+        <aside class="notes">
+        Tell the workflow, each 60 secs unless the resources are identical.</br>
+        All the resources come from the hypervisor, no other way. </br>
+        Conductor writes to DB, since computes cant.</br>
+        1 min max.
+        </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
-          ## Anatomy of a scheduling request - part 2
+          ## Boot request
 
 
 <div style="text-align: center;">
-<img style="width: 50%;" src="images/scheduling_request.png" alt="Scheduling request"></div>
-
+<img style="width: 50%;" src="sources/sched_part2.png" alt="Request from API to Scheduler goes to Hypervisor eventually"></div>
+        <aside class="notes">
+        Tell the workflow, comes from API to conductor, conductors calls (and wait for an answers), Scheduler picks lists from HostManager which reads DB etc.
+        </aside>
         </script>
       </section>
+
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+
+          ## Rescheduling a request
+
+
+<div style="text-align: center;">
+<img style="width: 50%;" src="sources/sched_part3.png" alt="Exception from Hypervisor reschedules a new node"></div>
+
+        <aside class="notes">
+        Exception comes from manager or driver, manager calls conductor for rescheduling by adding a retry field (not me) and increases by 1 number of retries
+        </aside>
+        </script>
+      </section>
+
       <section data-markdown>
         <script type="text/template">
           <section data-background="images/rh_vancouver_divider_bg.jpg">
 
           # _Divide ut regnes_
           # your cloud
-
+          <aside class="notes">
+          15 mins from the start of the presentation.
+          </aside>
         </script>
       </section>
 
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## What kind of segregation ?
 
@@ -301,17 +345,21 @@ class ExactRamFilter(filters.BaseHostFilter):
             - Availability Zones (think OpenStack, please !)
           - Virtual
             - Server Groups
+        <aside class="notes">
+        Mention that we wont discuss about regions since its not scheduler related. Keep things brief, more to come after. <br/>
+        Mention sgordon talk Compute 101 Tuesday 1205
+        </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Aggregates
 
-          - Groups of hosts (one host can be in multiple aggregates)
-          - Non user-facing
+          - Groups of compute nodes (one host can be in multiple aggregates)
+          - Invisible for end-users
           - Metadata-based
 
           - Related filters :
@@ -320,84 +368,19 @@ class ExactRamFilter(filters.BaseHostFilter):
             - AggregateMultiTenancyIsolation
             - AggregateCoreFilter
             - and others...
+        <aside class="notes">
+        Admin-only (RBAC policy), physical hosts.
+        </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
-
-          ## AggregateInstanceExtraSpecsFilter example
-
-<pre><code class="bash">
-$ nova aggregate-create fast-io nova
-+----+---------+-------------------+-------+----------+
-| Id | Name    | Availability Zone | Hosts | Metadata |
-+----+---------+-------------------+-------+----------+
-| 1  | fast-io | nova              |       |          |
-+----+---------+-------------------+-------+----------+
-
-$ nova aggregate-set-metadata 1 ssd=true
-+----+---------+-------------------+-------+-------------------+
-| Id | Name    | Availability Zone | Hosts | Metadata          |
-+----+---------+-------------------+-------+-------------------+
-| 1  | fast-io | nova              | []    | {u'ssd': u'true'} |
-+----+---------+-------------------+-------+-------------------+
-</code></pre>
-        </script>
-      </section>
-
-
-      <section data-markdown>
-        <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
-
-          ## AggregateInstanceExtraSpecsFilter example
-
-<pre><code class="bash" data-trim>
-
-$ nova aggregate-add-host 1 node1
-+----+---------+-------------------+-----------+-------------------+
-| Id | Name    | Availability Zone | Hosts      | Metadata          |
-+----+---------+-------------------+------------+-------------------+
-| 1  | fast-io | nova              | [u'node1'] | {u'ssd': u'true'} |
-+----+---------+-------------------+------------+-------------------+
-</code></pre>
-
-
-        </script>
-      </section>
-
-      <section data-markdown>
-        <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
-
-          ## AggregateInstanceExtraSpecsFilter example
-
-<pre><code class="bash" data-trim>
-
-$ nova flavor-create ssd.large 6 8192 80 4
-+----+-----------+-----------+------+-----------+------+-------+-------------+-----------+-------------+
-| ID | Name      | Memory_MB | Disk | Ephemeral | Swap | VCPUs | RXTX_Factor | Is_Public | extra_specs |
-+----+-----------+-----------+------+-----------+------+-------+-------------+-----------+-------------+
-| 6  | ssd.large | 8192      | 80   | 0         |      | 4     | 1           | True      | {}          |
-+----+-----------+-----------+------+-----------+------+-------+-------------+-----------+-------------+
-
-$ nova flavor-key ssd.large set ssd=true
-
-$ nova boot --flavor ssd.large myvm
-</code></pre>
-        </script>
-      </section>
-
-
-      <section data-markdown>
-        <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Availability Zones
 
-          - Groups of hosts (only one AZ per host)
+          - Groups of nodes (only one AZ per host)
           - User-facing (explicit boot command option)
           - Aggregate with a specific metadata key (``availability_zone``)
 
@@ -407,12 +390,15 @@ $ nova boot --flavor ssd.large myvm
 <pre><code class="bash" data-trim>
 $ nova boot --availability-zone az1 myvm
 </code></pre></center>
+        <aside class="notes">
+        "Who knows AWS availability zones ? (hands raising) Forget about that."
+        </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Server Groups
 
@@ -427,21 +413,29 @@ $ nova boot --availability-zone az1 myvm
 $ nova server-group-create --policy anti-affinity group-1
 $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 </code></pre>
+        <aside class="notes">
+        Since Icehouse, no deletion possible. Warning, races can occur.
+        </aside>
         </script>
       </section>
 
-      <section data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide">
+      <section data-markdown>
+        <script type="text/template">
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
-      <h2>Cells</h2>
-      <ul>
-       <li>Experimental
-      </ul>
-      <ul class="fadelist">
-       <li>Experimental
-       <li>Experimental
-       <li>Did I say, experimental ? 
-      </ul>
-      <p class="fragment grow"><center>Teasing Cells V2 : <a href="http://docs.openstack.org/developer/nova/devref/cells.html#manifesto">http://docs.openstack.org/developer/nova/devref/cells.html#manifesto</a></center></p>
+          ## Cells
+
+          - Sharding MQ and database per cell
+            - Parent cell running nova-api
+            - API calls proxied to child cells
+          - Specific ``nova.cells.CellsScheduler``
+          - Experimental !
+
+<br/><p style="text-align: center;"><a href="http://docs.openstack.org/developer/nova/devref/cells.html#manifesto">http://docs.openstack.org/developer/nova/devref/cells.html#manifesto</a></p>
+        <aside class="notes">
+        Explain why experimental (API not fully supported like Security Groups or Neutron). Use it only if your called RAX or CERN.
+        </aside>
+        </script>
       </section>
 
       <section data-markdown>
@@ -449,27 +443,34 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
           <section data-background="images/rh_vancouver_divider_bg.jpg">
 
           # OK, but what limitations ?
-          ### (Unclassified information)
+          <h3 style='color: #fff;'>(Unclassified information)
+          </h3>
 
+          <aside class="notes">
+          25 mins for the start of the presentation.
+          </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Exhibit A
 
           Did you enjoy troubleshooting a failing scheduling request ?
-          </br></br>
-          <center>Think about nova.conf
-          <pre><code data-trim>debug = True</code></pre></center>
+          
+          - Think about nova.conf set to <pre><code>debug = True</code></code>
+          <aside class="notes">
+          Filters are not explaining why they fail, also check the req-id to get the instance. </br>
+          NoValidHost exception also due to either reschedule, or because a failed filter.
+          </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Exhibit B
 
@@ -477,13 +478,17 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 
           - Computes nodes updating each 60 secs
           - Want multiple schedulers ? Bad idea.
+          <aside class="notes">
+          Racy by design : we dont want to lock the scheduler so we accept retries as a tradeoff. </br>
+          That said, improvements can be done, like incremental updates or shared state for multiple schedulers.
+          </aside>
         </script>
       </section>
 
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Exhibit C
 
@@ -491,12 +496,15 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 
           - Scheduler scales per request (DB call)
           - ``CachingScheduler`` can help
+          <aside class="notes">
+          To keep in mind, the more requests you have, the more DB hits you will have. Tradeoff again with CachingScheduler.
+          </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Exhibit D
 
@@ -504,12 +512,16 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 
           - Interfaces with other Nova components
           - Compute Claims
+          <aside class="notes">
+          Lots of interactions, blobs as dicts, not versioned, not typed. Resources can be claimed, but not so simple if its not an integer but rather complex. Use NUMAFilter as an example. </br>
+          Mention that claims are used for rescheduling - by design again. But claims could also be on the Scheduler.
+          </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## Kilo efforts
 
@@ -523,7 +535,7 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ##  Hoping for Liberty
 
@@ -531,18 +543,26 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
           
           - Tech debt reduction (again)
             - Clean-up the interfaces between the scheduler and Nova
+            - Persist the request information with hints
             - Scrub the logs for helping operators
             - Shared-state scheduler
           - Allocation ratios to the ResourceTracker
+          - Check a destination before migrating
           - _Scheduler repository split_
+          <aside class="notes">
+          Keep vague on the last item and go quick to the next slide, thats all the surprise.
+          </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ##  Wait, what ?
+          <aside class="notes">
+          Mention all the discussions we had previously
+          </aside>
         </script>
       </section>
 
@@ -552,76 +572,91 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 
           # Manifesto for
           # better scheduling
-
+          <aside class="notes">
+          32 mins max from the beginning. Be quick, you need to rush to leave 5 mins for questions. </br>
+          Try 3 mins for this whole section.
+          </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## You promised me _Advanced_ SLA, right ?
 
           - Yeah, let me tell you some stories...
+          <aside class="notes">
+          20 secs on that slide, just introducing back the concept of SLA.
+          </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
-          ## Pets vs. Cattle story
+          ## The pets vs. cattle story
 
-          - OpenStack == cloud
-          - Private / Public / Hybrid
-          - Think about .aaS
           - _"What if I want golden VMs ?"_
 
+          <aside class="notes">
+          Just mention the use-case, not the solution and show how its not possible now.
+          </aside>
         </script>
       </section>
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## The Affinity story
 
           - _"I want a boot-from-volume VM on the same rack than my SAN bay"_
           - _"I want a VM with at least 1GBps bandwidth port"_
           - _"I want my containers from the same pod not on the same machine"_
+          <aside class="notes">
+          Again, just keep it brief, give only those examples to point out how we need cross-project scheduling
+          </aside>
         </script>
       </section>
 
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## The Modularity story
 
           - Do you need to update all the resources ?
           - Do you need all filters ?
           - Do you want to add some extra resources ?
+          <aside class="notes">
+          Brief, brief. Just show that we dont want something monolithic - at least we need to keep the existing and improve it.
+          </aside>
         </script>
       </section>
 
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
           ## The AWS story
 
           - I want to have spot-instances in OpenStack
+          <aside class="notes">
+          Mention that users want reservations for OpenStack. We can only schedule *now*, not in the future for Capacity Planning.
+          </aside>
         </script>
       </section>
 
 
       <section data-markdown>
         <script type="text/template">
-        <!-- .slide: data-background="images/rh_vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
+        <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
-          ## Towards the road
+          ## Along the road
 
           - We need a better velocity for improving the scheduler features
           - We need to reduce the inherited technical debt
@@ -629,6 +664,12 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
             - The ~~Gantt~~ Nova-scheduler team
             - Splitting the code ? A new project ?
             - Your help is welcome
+          <aside class="notes">
+          Last slide, keep it quick and open, just mention that the talks for splitting out the scheduler are still to come in the Design Summit. </br>
+          Dont mention that we *will* split, just that its open for discussion and mention the Gantt repo wipe we recently did.</br>
+
+          Adjust the duration of this slide with the remaining time. You should be at 5 mins left.
+          </aside>
         </script>
       </section>
 
@@ -667,7 +708,7 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
         margin: 0,
 
 				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
 
 				// Optional libraries used to extend on reveal.js
 				dependencies: [
@@ -707,14 +748,3 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 
 	</body>
 </html>
-
-
-<!--
-
-Missed : 
-- RetryFilter (mecanisme)
-- Allocation ratios
-- RequestSpec persistence 
-- Graphs pour aggregats etc/
-+4 mins ! - 3/4 qs.
--->
