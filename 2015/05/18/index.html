@@ -632,9 +632,7 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 
           ## The Modularity story
 
-          - Do you need to update all the resources ?
-          - Do you need all filters ?
-          - Do you want to add some extra resources ?
+          - _"I want to only update what I need for the filters"_
           <aside class="notes">
           Brief, brief. Just show that we dont want something monolithic - at least we need to keep the existing and improve it.
           </aside>
@@ -648,7 +646,7 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 
           ## The AWS story
 
-          - I want to have spot-instances in OpenStack
+          - _"I want to have spot-instances in OpenStack"_
           <aside class="notes">
           Mention that users want reservations for OpenStack. We can only schedule *now*, not in the future for Capacity Planning.
           </aside>
@@ -660,7 +658,7 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
         <script type="text/template">
         <!-- .slide: data-background="images/vancouver_footer.png"  data-background-size="contain" data-transition="slide" -->
 
-          ## Along the road
+          ## The path forward
 
           - We need a better velocity for improving the scheduler features
           - We need to reduce the inherited technical debt
@@ -671,7 +669,6 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
           <aside class="notes">
           Last slide, keep it quick and open, just mention that the talks for splitting out the scheduler are still to come in the Design Summit. </br>
           Dont mention that we *will* split, just that its open for discussion and mention the Gantt repo wipe we recently did.</br>
-
           Adjust the duration of this slide with the remaining time. You should be at 5 mins left.
           </aside>
         </script>
