@@ -101,8 +101,8 @@
 
 <table width=100%>
   <tr >
-    <td style="width: 50%;"><h3 style='color: #fff;'>Sylvain Bauza<br/>Senior Sofware Engineer, Red Hat<br/></h3>
-    <td style="width: 50%; text-align: right;"><h3 style='color: #fff;'>Don Dugger<br/>Title XXXX, Intel<br/></h3>
+    <td style="width: 50%;"><h3 style='color: #fff;'>Sylvain Bauza<br/>Senior Software Engineer, Red Hat<br/></h3>
+    <td style="width: 50%; text-align: right;"><h3 style='color: #fff;'>Don Dugger<br/>Senior Software Engineer, Intel<br/></h3>
   </tr>
 </table>
 <br/>
@@ -125,8 +125,8 @@
 
           - Scheduler 101
           - How to split your cloud
-          - Scheduler status snapshot
-          - Next steps
+          - Limitations and efforts
+          - What future ?
       <aside class="notes">
       Be quick, not detailed...
       </aside>
@@ -460,7 +460,10 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 
           Did you enjoy troubleshooting a failing scheduling request ?
           
-          - Think about nova.conf set to <pre><code>debug = True</code></code>
+          - Think about nova.conf set to 
+            <pre><code data-trim>
+            debug = True
+            </code></pre>
           <aside class="notes">
           Filters are not explaining why they fail, also check the req-id to get the instance. </br>
           NoValidHost exception also due to either reschedule, or because a failed filter.
@@ -545,7 +548,8 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
             - Clean-up the interfaces between the scheduler and Nova
             - Persist the request information with hints
             - Scrub the logs for helping operators
-            - Shared-state scheduler
+            - Availability Zones
+          - Shared-state scheduler
           - Allocation ratios to the ResourceTracker
           - Check a destination before migrating
           - _Scheduler repository split_
@@ -746,5 +750,15 @@ $ nova boot --image IMAGE_ID --flavor 1 --hint group=SERVER_GROUP_UUID server-1
 
 		</script>
 
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-62682619-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
 	</body>
 </html>
