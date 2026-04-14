@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - minimal-mistakes-theme  # TEMPORARY: remove after preview
     paths-ignore:
       - .gitignore
       - README.md
