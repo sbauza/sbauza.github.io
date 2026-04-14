@@ -1,3 +1,9 @@
+---
+layout: single
+title: "AgentReady Assessment — OpenStack Nova (with CLAUDE.md)"
+permalink: /agentready/report-nova_with_claude/
+---
+
 # 🤖 AgentReady Assessment Report
 
 **Repository**: repo
