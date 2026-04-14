@@ -1,3 +1,101 @@
-theme: minima
+theme: minimal-mistakes-jekyll
+minimal_mistakes_skin: "default"
+
+# Site Settings
+locale: "en-US"
 title: "Sylvain Bauza"
-description: "Projects and presentations"
+subtitle: "OpenStack & Cloud Computing"
+name: "Sylvain Bauza"
+description: "Projects, presentations, and writings about OpenStack, cloud computing, and AI."
+url: "https://sbauza.github.io"
+repository: "sbauza/sbauza.github.io"
+enable_copy_code_button: true
+search: true
+
+# Site Author (left sidebar)
+author:
+  name: "Sylvain Bauza"
+  avatar: "https://avatars.githubusercontent.com/u/3694158?v=4"
+  bio: "Software Engineer working on OpenStack Nova, GPU virtualization, and AI agent workloads."
+  location: "France"
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/sbauza"
+
+# Site Footer
+footer:
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/sbauza"
+
+# Reading Files
+include:
+  - _pages
+exclude:
+  - vendor
+  - .bundle
+  - .sass-cache
+  - Gemfile
+  - LICENSE
+  - README.md
+  - editor/
+
+# Conversion
+markdown: kramdown
+highlighter: rouge
+
+# Markdown Processing
+kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..6
+
+# Sass/SCSS
+sass:
+  sass_dir: _sass
+  style: compressed
+
+# Outputting
+permalink: /:categories/:title/
+timezone: Europe/Paris
+paginate: 5
+paginate_path: /page:num/
+
+# Plugins
+plugins:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jekyll-include-cache
+
+# Archives
+category_archive:
+  type: liquid
+  path: /categories/
+tag_archive:
+  type: liquid
+  path: /tags/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      share: true
+      related: true
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+      author_profile: true
