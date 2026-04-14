@@ -16,7 +16,7 @@ search: true
 author:
   name: "Sylvain Bauza"
   avatar: "https://avatars.githubusercontent.com/u/3694158?v=4"
-  bio: "Software Engineer working on OpenStack Nova, GPU virtualization, and AI agent workloads."
+  bio: "Principal Software Engineer working on OpenStack Nova, GPU virtualization, and AI agentic integration."
   location: "France"
   links:
     - label: "GitHub"
