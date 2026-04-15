@@ -14,6 +14,6 @@ author_profile: true
 - [How to split a cake? GPUs with OpenStack](/presentations/gpus-split-cake-2020/) — OpenInfra Summit, October 2020
 - [Call it real Virtual GPUs in Nova](/presentations/virtual-gpus-nova-2019/) — OpenInfra Summit, May 2019
 - [Upstream bug triage: The hidden gem?](/presentations/bug-triage-2018/) — OpenInfra Summit, November 2018
-- [Docker, What Else?](/2015/03/19/docker_what_else.html) — Docker overview
-- [Juno Roadmap](/2014/07/01/juno_roadmap.html) — OpenStack Juno release roadmap
-- [OpenStack 101](/2014/07/01/openstack_101.html) — Introduction to OpenStack
+- [Docker, What Else?](/2015/03/19/docker_what_else.html) — OpenStack Meetup, March 2015
+- [Juno Roadmap](/2014/07/01/juno_roadmap.html) — OpenStack Meetup, July 2014
+- [OpenStack 101](/2014/07/01/openstack_101.html) — OpenStack Meetup, July 2014
