@@ -1,14 +1,8 @@
 ---
 layout: single
 title: "How can I give virtual GPU resources to my end users seamlessly?"
-date: 2024-05-22
-categories:
-  - Presentations
-tags:
-  - openstack
-  - nova
-  - vgpu
-  - gpu
+permalink: /presentations/vgpu-openinfra-day-france/
+author_profile: true
 ---
 
 Presentation given at **OpenInfra Day France 2024** about virtual GPU support in OpenStack Nova — covering VFIO-mdev, SR-IOV GPUs, vGPU live migration, and unified limits.
