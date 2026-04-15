@@ -12,6 +12,12 @@ repository: "sbauza/sbauza.github.io"
 enable_copy_code_button: true
 search: true
 
+# Analytics
+analytics:
+  provider: "google-gtag"
+  google:
+    tracking_id: "G-ERF97D749R"
+
 # Site Author (left sidebar)
 author:
   name: "Sylvain Bauza"
