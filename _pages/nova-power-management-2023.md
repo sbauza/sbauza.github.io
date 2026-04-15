@@ -5,7 +5,7 @@ permalink: /presentations/nova-power-management-2023/
 author_profile: true
 ---
 
-Presentation given at the **OpenInfra Summit Berlin, June 2023** about power management and sustainability features in OpenStack Nova.
+Presentation given at the **OpenInfra Summit Vancouver, June 2023** about power management and sustainability features in OpenStack Nova.
 
 ## Video
 

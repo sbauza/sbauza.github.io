@@ -9,7 +9,7 @@ author_profile: true
 - [How can I give virtual GPU resources to my end users seamlessly?](/presentations/vgpu-openinfra-summit-asia-2024/) — OpenInfra Summit Asia 2024
 - [When you want to help OpenStack Nova but you don't know how to do it](/presentations/nova-contributions-2024/) — OpenInfra Summit Asia 2024
 - [How can I give virtual GPU resources to my end users seamlessly?](/presentations/vgpu-openinfra-day-france/) — OpenInfra Day France 2024
-- [What's new in Nova power management and sustainability](/presentations/nova-power-management-2023/) — OpenInfra Summit Berlin 2023
+- [What's new in Nova power management and sustainability](/presentations/nova-power-management-2023/) — OpenInfra Summit Vancouver 2023
 - [How to split a cake? GPUs with OpenStack](/presentations/gpus-split-cake-2020/) — OpenInfra Summit, October 2020
 - [Call it real Virtual GPUs in Nova](/presentations/virtual-gpus-nova-2019/) — OpenInfra Summit, May 2019
 - [Upstream bug triage: The hidden gem?](/presentations/bug-triage-2018/) — OpenInfra Summit, November 2018
