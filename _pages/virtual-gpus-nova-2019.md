@@ -9,12 +9,18 @@ Presentation given at the **OpenInfra Summit, May 2019** about virtual GPU suppo
 
 ## Video
 
-<iframe width="100%" height="400" src="https://www.youtube.com/embed/p_HAoTtqCkY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/p_HAoTtqCkY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
 
 ## Slides
 
-<iframe src="https://docs.google.com/presentation/d/1HNXbT1awinXVWVMfB1LqGAALhzYS9HNoRln24zcjNxc/embed?start=false&loop=false&delayms=3000" frameborder="0" width="100%" height="450" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://docs.google.com/presentation/d/1HNXbT1awinXVWVMfB1LqGAALhzYS9HNoRln24zcjNxc/embed?start=false&loop=false&delayms=3000" frameborder="0" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+</div>
 
 ## Screencast
 
-<iframe src="https://drive.google.com/file/d/1MVQXS5OVlpW16ku6sp69nPqhQqN8xHrv/preview" width="100%" height="400" allow="autoplay"></iframe>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://drive.google.com/file/d/1MVQXS5OVlpW16ku6sp69nPqhQqN8xHrv/preview" frameborder="0" allow="autoplay"></iframe>
+</div>
