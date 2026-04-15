@@ -18,6 +18,17 @@ analytics:
   google:
     tracking_id: "G-ERF97D749R"
 
+# Comments
+comments:
+  provider: "giscus"
+  giscus:
+    repo_id: "MDEwOlJlcG9zaXRvcnkxNjcwMjM5MA=="
+    category_name: "Announcements"
+    category_id: "DIC_kwDOAP7bts4C666t"
+    mapping: "pathname"
+    reactions_enabled: "1"
+    theme: "light"
+
 # Site Author (left sidebar)
 author:
   name: "Sylvain Bauza"
@@ -109,6 +120,7 @@ defaults:
       layout: single
       author_profile: true
       read_time: true
+      comments: true
       share: true
       related: true
   - scope:
@@ -117,3 +129,4 @@ defaults:
     values:
       layout: single
       author_profile: true
+      comments: true
