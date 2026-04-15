@@ -4,9 +4,9 @@ minimal_mistakes_skin: "default"
 # Site Settings
 locale: "en-US"
 title: "Sylvain Bauza"
-subtitle: "OpenStack & Cloud Computing"
+subtitle: "OpenStack et. al."
 name: "Sylvain Bauza"
-description: "Projects, presentations, and writings about OpenStack, cloud computing, and AI."
+description: "Presentations and writings about OpenStack and AI."
 url: "https://sbauza.github.io"
 repository: "sbauza/sbauza.github.io"
 enable_copy_code_button: true
@@ -17,7 +17,7 @@ author:
   name: "Sylvain Bauza"
   avatar: "https://avatars.githubusercontent.com/u/3694158?v=4"
   bio: "Principal Software Engineer working on OpenStack Nova, GPU virtualization, and AI agentic integration."
-  location: "France"
+  location: "Grenoble, France"
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
